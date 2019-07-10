@@ -32,7 +32,7 @@ public class TicketServiceTest {
         Reservation reservation = new Reservation(rows, seatsPerHallRow);
         reservation.print();
         TicketService ticketService = new TicketServiceImpl(reservation);
-        SeatHold seatHold = ticketService.findAndHoldSeats(5, "stanley.gracious@gmail.com");
+        SeatHold seatHold = ticketService.findAndHoldSeats(5, "test.demo@gmail.com");
 
         Assert.assertNotNull("Seats held should not be null", seatHold);
         Assert.assertTrue("All Seats Booked", ticketService.numSeatsAvailable() == 0);
@@ -50,7 +50,7 @@ public class TicketServiceTest {
         Reservation reservation = new Reservation(rows, seatsPerHallRow);
         reservation.print();
         TicketService ticketService = new TicketServiceImpl(reservation);
-        SeatHold seatHold = ticketService.findAndHoldSeats(9, "stanley.gracious@gmail.com");
+        SeatHold seatHold = ticketService.findAndHoldSeats(9, "test.demo@gmail.com");
         validateSeats(seatHold, reservation, BookingStatus.ONHOLD_FOR_RESERVATION);
         String confirmationCode = ticketService.reserveSeats(seatHold, seatHold.getCustomerEmail());
         log.debug("Confirmation Code is" + confirmationCode);
@@ -64,7 +64,7 @@ public class TicketServiceTest {
         Reservation reservation = new Reservation(rows, seatsPerHallRow);
         reservation.print();
         TicketService ticketService = new TicketServiceImpl(reservation);
-        SeatHold seatHold = ticketService.findAndHoldSeats(5, "stanley.gracious@gmail.com");
+        SeatHold seatHold = ticketService.findAndHoldSeats(5, "test.demo@gmail.com");
         
         Assert.assertNotNull("Seats held should not be null", seatHold);
         Assert.assertTrue("Available count is Zero", ticketService.numSeatsAvailable() == 0);
@@ -115,7 +115,7 @@ public class TicketServiceTest {
         Reservation reservation = new Reservation(rows, seatsPerHallRow);
         reservation.print();
         TicketService ticketService = new TicketServiceImpl(reservation);
-        SeatHold seatHold = ticketService.findAndHoldSeats(5, "stanley.gracious@gmail.com");
+        SeatHold seatHold = ticketService.findAndHoldSeats(5, "test.demo@gmail.com");
         
         Assert.assertNotNull("Seats held should not be null", seatHold);
         Assert.assertTrue("Available count is 5", ticketService.numSeatsAvailable() == 5);

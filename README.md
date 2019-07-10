@@ -1,19 +1,26 @@
 # Ticket Reservation System
-A simple ticket reservation system books the tickets, temporary hold, and final reservation of seats for multiple users
+A simple ticket reservation system books the tickets, temporary holds the ticket, completes the final reservation of seats for multiple users and also performs the cancellation of the booking with the following menu on the console
+
+---------- Enter your choice: ---------
+1. Book Seats
+2. Show total Available Seats
+3. View Reservation
+4. Cancel Reservation
+5. Exit
+
 The build tool used is Maven.
 
 Note: There are few assumptions to the Demo Application
-1) There is no client server architecture to demonstrate the progam functionality due to time constraint
-2) There is no MVC architecture to demonstrate the progam functionality due to time constraint
+1) There is no client server architecture to demonstrate the progam functionality
+2) There is no MVC architecture to demonstrate the progam functionality
 3) Input Validations on user input is not done as there can be lot of variations on data type, data length, data range and limits etc
 4) Demo application does book tickets for muliple email-id's as input and store the reservation against multiple email-id which is the key field
-5) Application demo is why console/scanner object
+5) Application demo is via console/scanner object
 6) Menu options drive the user navigation to book the tickets, user can select the menu items {1,2,3,4,5} on console to chose the options
 7) Menu options are always available to drive the flow
 8) All steps to build and run the program are given below
-9) Console Output for All use cases is documented below as part of testing the quality product in less time
-10) Code and Binaries are given for this Demo
-11) Junit cases are coded for this Demo
+9) Console Output for All use cases is documented below as part of test completion
+10) Junit cases are coded for this Demo
 
 ## Prerequisite
 Java 8
@@ -29,9 +36,9 @@ Build/Install the Project or use the library jar provided
 Copy the Jar to c:\tech\ticket-reservation-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 ## Instructions
-Start the Main Class
+Start the Main Class   -- 2 arguments are required to run the program number of rows and number of seats in row for eg : 10 rows and 10 seats in each row
 
-java -cp ticket-reservation-1.0-SNAPSHOT-jar-with-dependencies.jar com.walmart.ticket.reservation.TicketBookingProcessor
+java -cp ticket-reservation-1.0-SNAPSHOT-jar-with-dependencies.jar com.walmart.ticket.reservation.TicketBookingProcessor 10 10
 
 Application will start with the following prompt
 2019-07-08 22:18:49 DEBUG TicketBookingProcessor:34 - Welcome to Ticket Booking Application
@@ -47,11 +54,11 @@ Application will start with the following prompt
 1
 2019-07-08 22:20:22 DEBUG TicketBookingProcessor:83 - Enter your email id for Ticket Booking:
 
-stanley.gracious@gmail.com
+test.demo@gmail.com
 2019-07-08 22:20:31 DEBUG TicketBookingProcessor:85 - Enter the number of seats you want to book
 
 10
-2019-07-08 22:20:34 DEBUG TicketBookingProcessor:93 - stanley.gracious@gmail.com, your total seats are 10
+2019-07-08 22:20:34 DEBUG TicketBookingProcessor:93 - test.demo@gmail.com, your total seats are 10
 2019-07-08 22:20:34 DEBUG TicketServiceImpl:55 - --------------------------------------
 2019-07-08 22:20:34 DEBUG TicketServiceImpl:56 - On hold seats before reservation
 2019-07-08 22:20:34 DEBUG Reservation:54 - HallRow{rowId=1, availableSeatsInRow=0} [HallSeat{id=1, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=2, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=3, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=4, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=5, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=6, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=7, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=8, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=9, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=10, status=ONHOLD_FOR_RESERVATION}]
@@ -99,7 +106,7 @@ Y
 3
 2019-07-08 22:22:20 DEBUG TicketBookingProcessor:127 - Do you want to view your reservation? if so please enter the email id
 
-stanley.gracious@gmail.com
+test.demo@gmail.com
 Confirmation Code: 58, Ticket Booking Details: SeatHold{confirmationCode=58, totalSeats=10, requestedSeats={1=1-10}}
 2019-07-08 22:22:33 DEBUG TicketBookingProcessor:55 -
 ---------- Enter your choice: ---------
@@ -115,7 +122,7 @@ Confirmation Code: 58, Ticket Booking Details: SeatHold{confirmationCode=58, tot
 2019-07-08 22:23:16 DEBUG TicketBookingProcessor:157 - Confirm 'Y' or 'N' to continue
 Y
 2019-07-08 22:23:18 DEBUG TicketBookingProcessor:160 - Enter your email id for Ticket Booking:
-stanley.gracious@gmail.com
+test.demo@gmail.com
 2019-07-08 22:23:26 DEBUG TicketServiceImpl:112 - --------------------------------------
 2019-07-08 22:23:26 DEBUG TicketServiceImpl:113 - Seats Available after removing hold
 2019-07-08 22:23:26 DEBUG Reservation:54 - HallRow{rowId=1, availableSeatsInRow=10} [HallSeat{id=1, status=RESERVATION_CONFIRMED}, HallSeat{id=2, status=RESERVATION_CONFIRMED}, HallSeat{id=3, status=RESERVATION_CONFIRMED}, HallSeat{id=4, status=RESERVATION_CONFIRMED}, HallSeat{id=5, status=RESERVATION_CONFIRMED}, HallSeat{id=6, status=RESERVATION_CONFIRMED}, HallSeat{id=7, status=RESERVATION_CONFIRMED}, HallSeat{id=8, status=RESERVATION_CONFIRMED}, HallSeat{id=9, status=RESERVATION_CONFIRMED}, HallSeat{id=10, status=RESERVATION_CONFIRMED}]
@@ -146,11 +153,11 @@ stanley.gracious@gmail.com
 1
 2019-07-08 22:24:33 DEBUG TicketBookingProcessor:83 - Enter your email id for Ticket Booking:
 
-stanley.gracious@gmail.com
+test.demo@gmail.com
 2019-07-08 22:24:40 DEBUG TicketBookingProcessor:85 - Enter the number of seats you want to book
 
 10
-2019-07-08 22:24:42 DEBUG TicketBookingProcessor:93 - stanley.gracious@gmail.com, your total seats are 10
+2019-07-08 22:24:42 DEBUG TicketBookingProcessor:93 - test.demo@gmail.com, your total seats are 10
 2019-07-08 22:24:42 DEBUG TicketServiceImpl:55 - --------------------------------------
 2019-07-08 22:24:42 DEBUG TicketServiceImpl:56 - On hold seats before reservation
 2019-07-08 22:24:42 DEBUG Reservation:54 - HallRow{rowId=1, availableSeatsInRow=0} [HallSeat{id=1, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=2, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=3, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=4, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=5, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=6, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=7, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=8, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=9, status=ONHOLD_FOR_RESERVATION}, HallSeat{id=10, status=ONHOLD_FOR_RESERVATION}]
@@ -179,7 +186,7 @@ stanley.gracious@gmail.com
 3
 2019-07-08 22:26:36 DEBUG TicketBookingProcessor:127 - Do you want to view your reservation? if so please enter the email id
 
-stanley.gracious@gmail.com
+test.demo@gmail.com
 2019-07-08 22:26:44 DEBUG TicketBookingProcessor:136 - Your Don't have any Reservation Details
 2019-07-08 22:26:44 DEBUG TicketBookingProcessor:55 -
 ---------- Enter your choice: ---------
@@ -194,7 +201,7 @@ stanley.gracious@gmail.com
 2019-07-08 22:57:58 INFO  TicketBookingProcessor:154 - Confirm 'Y' or 'N' to continue
 Y
 2019-07-08 22:58:00 INFO  TicketBookingProcessor:157 - Enter your email id for Ticket Booking:
-stanley.gracious@gmail.com
+test.demo@gmail.com
 2019-07-08 22:58:16 INFO  TicketBookingProcessor:161 - No Reservation Available to Cancel
 2019-07-08 22:58:16 INFO  TicketBookingProcessor:55 -
 ---------- Enter your choice: ---------
@@ -209,7 +216,7 @@ Booking tickets for 3 different users and viewing reservation for all 3 users
 3
 2019-07-08 23:05:14 INFO  TicketBookingProcessor:125 - Do you want to view your reservation? if so please enter the email id
 
-max@gmail.com
+james@gmail.com
 2019-07-08 23:05:19 INFO  TicketBookingProcessor:130 - Confirmation Code: 94, Ticket Booking Details: SeatHold{confirmationCode=94, totalSeats=17, requestedSeats={3=1-7, 4=1-10}}
 2019-07-08 23:05:19 INFO  TicketBookingProcessor:55 -
 ---------- Enter your choice: ---------
@@ -222,7 +229,7 @@ max@gmail.com
 3
 2019-07-08 23:05:40 INFO  TicketBookingProcessor:125 - Do you want to view your reservation? if so please enter the email id
 
-melanie@gmail.com
+smith@gmail.com
 2019-07-08 23:05:50 INFO  TicketBookingProcessor:130 - Confirmation Code: 35, Ticket Booking Details: SeatHold{confirmationCode=35, totalSeats=10, requestedSeats={2=1-10}}
 2019-07-08 23:05:50 INFO  TicketBookingProcessor:55 -
 ---------- Enter your choice: ---------
@@ -235,7 +242,7 @@ melanie@gmail.com
 3
 2019-07-08 23:05:55 INFO  TicketBookingProcessor:125 - Do you want to view your reservation? if so please enter the email id
 
-stanley.gracious@gmail.com
+test.demo@gmail.com
 2019-07-08 23:06:03 INFO  TicketBookingProcessor:130 - Confirmation Code: 29, Ticket Booking Details: SeatHold{confirmationCode=29, totalSeats=20, requestedSeats={1=1-10, 5=1-10}}
 2019-07-08 23:06:03 INFO  TicketBookingProcessor:55 -
 ---------- Enter your choice: ---------
