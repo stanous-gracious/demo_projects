@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.ticket.reservation.service.TicketServiceTest
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.689 sec

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TicketServiceImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ticket-reservation</a> &gt; <a href="index.source.html" class="el_package">com.ticket.reservation.service</a> &gt; <span class="el_source">TicketServiceImpl.java</span></div><h1>TicketServiceImpl.java</h1><pre class="source lang-java linenums">package com.ticket.reservation.service;
+
+import com.ticket.reservation.model.Constants;
+import com.ticket.reservation.model.*;
+import org.apache.log4j.Logger;
+
+import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
+
+/**
+ * Service class to process the seat booking request from the user
+ */
+public class TicketServiceImpl implements TicketService {
+
+    private Reservation reservation;
+<span class="fc" id="L17">    private final static Logger log = Logger.getLogger(TicketServiceImpl.class);</span>
+<span class="fc" id="L18">    private static final ReentrantLock lock = new ReentrantLock();</span>
+
+    /**
+     * 
+     * @param numSeats the number of seats to find and hold
+     * @param customerEmail unique identifier for the customer
+     * @return
+     */
+    public SeatHold findAndHoldSeats(int numSeats, String customerEmail) {
+
+<span class="fc" id="L28">        lock.lock();</span>
+<span class="fc" id="L29">        SeatHold seatHold = new SeatHold(customerEmail, numSeats);</span>
+        try {
+<span class="fc bfc" id="L31" title="All 2 branches covered.">            while (numSeats != 0) {</span>
+
+<span class="fc" id="L33">                HallRow selectedRow = bookSeats(numSeats);</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">                if (selectedRow != null) {</span>
+<span class="fc" id="L35">                    List&lt;HallSeat&gt; seats = reservation.getReservationMap().get(selectedRow);</span>
+
+                    // start to end available seats
+<span class="fc" id="L38">                    int beginSeatId = seats.size() - selectedRow.getAvailableSeatsInRow() + 1;</span>
+<span class="fc" id="L39">                    int onHoldSeats = Math.min(numSeats, selectedRow.getAvailableSeatsInRow());</span>
+<span class="fc" id="L40">                    int endSeatId = beginSeatId + onHoldSeats - 1;</span>
+
+                    // mark the seats as on hold
+<span class="fc" id="L43">                    seatHold.getRequestedSeats().put(selectedRow.getRowId(), String.valueOf(beginSeatId + Constants.delimiter + endSeatId));</span>
+
+                    //changing the status of seats to on hold
+<span class="fc" id="L46">                    seats.subList(beginSeatId - 1, endSeatId).forEach((seat) -&gt; seat.setStatus(BookingStatus.ONHOLD_FOR_RESERVATION));</span>
+
+                    // update the seats in current row with allocated seats
+<span class="fc" id="L49">                    selectedRow.putOnHoldSeatsInRow(onHoldSeats);</span>
+                    // updated the reservation map for allocated seats
+<span class="fc" id="L51">                    reservation.putOnHoldTotalSeats(onHoldSeats);</span>
+
+<span class="fc" id="L53">                    numSeats -= onHoldSeats;</span>
+<span class="fc" id="L54">                } else {</span>
+<span class="nc" id="L55">                    numSeats = 0;</span>
+                }
+<span class="fc" id="L57">            }</span>
+        }finally{
+<span class="pc" id="L59">            lock.unlock();</span>
+<span class="fc" id="L60">        }</span>
+<span class="fc" id="L61">        log.info(&quot;--------------------------------------&quot;);</span>
+<span class="fc" id="L62">        log.info(&quot;On hold seats before reservation&quot;);</span>
+<span class="fc" id="L63">        reservation.print();</span>
+<span class="fc" id="L64">        log.info(&quot;--------------------------------------&quot;);</span>
+<span class="fc" id="L65">        return seatHold;</span>
+    }
+
+    /**
+     * Custom Logic to fill the reservation map for booking the seats
+     * @param numSeats
+     * @return
+     */
+    private HallRow bookSeats(int numSeats) {
+
+        //Get all Rows where the seats are available to reserve
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        List&lt;HallRow&gt; rows = reservation.getReservationMap().keySet().stream().filter(row -&gt; row.getAvailableSeatsInRow() &gt; 0)</span>
+<span class="fc" id="L77">                .collect(Collectors.toList());</span>
+        // if booking seats are less then available seats in row -&gt; book them
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if(numSeats &lt; rows.get(0).getAvailableSeatsInRow()) {</span>
+<span class="fc" id="L80">            return rows.get(0);</span>
+        }
+        // if booking seats are greater then entire available row --&gt; book the entire row
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if(numSeats &gt; rows.get(rows.size()-1).getAvailableSeatsInRow()) {</span>
+<span class="fc" id="L84">            return rows.get(rows.size()-1);</span>
+        }
+
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        for(HallRow row : rows)</span>
+        {
+            // exact number of booking seats are matching with available seats
+<span class="fc bfc" id="L90" title="All 2 branches covered.">            if(row.getAvailableSeatsInRow() == numSeats){</span>
+<span class="fc" id="L91">                return row;</span>
+            }//first fill the row which has few empty seats and then pickup next row for second iteration
+<span class="pc bpc" id="L93" title="2 of 4 branches missed.">            else if(row.getAvailableSeatsInRow() &gt; 0 &amp;&amp; row.getAvailableSeatsInRow() &lt; numSeats){</span>
+<span class="fc" id="L94">                return row;</span>
+            }
+<span class="nc" id="L96">        }//end of for</span>
+
+        //no match found
+<span class="nc" id="L99">        return null;</span>
+    }
+
+    /**
+     * reset the hold seats
+     * @param seatHold
+     */
+    public void resetHeldSeats(SeatHold seatHold) {
+<span class="fc" id="L107">        seatHold.getRequestedSeats().entrySet().forEach(selectedRow -&gt; {</span>
+<span class="fc" id="L108">            updateHeldSeatStatus(selectedRow, BookingStatus.ONHOLD_FOR_RESERVATION, BookingStatus.OPEN_FOR_RESERVATION);</span>
+<span class="fc" id="L109">            reservation.getReservationMap().entrySet().forEach(row -&gt; {</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">                if(row.getKey().getRowId() == selectedRow.getKey()) {</span>
+<span class="fc" id="L111">                    row.getKey().releaseSeatsInRow(getNumSeatsHeldOrReserved(selectedRow.getValue()));</span>
+                }
+<span class="fc" id="L113">            });</span>
+<span class="fc" id="L114">        });</span>
+<span class="fc" id="L115">        reservation.releaseTotalSeats(seatHold.getTotalSeats());</span>
+<span class="fc" id="L116">        log.info(&quot;--------------------------------------&quot;);</span>
+<span class="fc" id="L117">        log.info(&quot;Seats Available after removing hold&quot;);</span>
+<span class="fc" id="L118">        reservation.print();</span>
+<span class="fc" id="L119">        log.info(&quot;--------------------------------------&quot;);</span>
+<span class="fc" id="L120">    }</span>
+
+    /**
+     * Reserve the seats and return the confirmation code to the user
+     * @param seatHold holds the multiple booking by the user
+     * @param customerEmail the email address of the customer to which the seat hold is assigned
+     * @return
+     */
+    public String reserveSeats(SeatHold seatHold, String customerEmail) {
+<span class="fc" id="L129">        seatHold.getRequestedSeats().entrySet().forEach((entry) -&gt; {</span>
+<span class="fc" id="L130">            updateHeldSeatStatus(entry, BookingStatus.ONHOLD_FOR_RESERVATION, BookingStatus.RESERVATION_CONFIRMED);</span>
+<span class="fc" id="L131">        });</span>
+<span class="fc" id="L132">        seatHold.print();</span>
+<span class="fc" id="L133">        log.info(&quot;--------------------------------------&quot;);</span>
+<span class="fc" id="L134">        log.info(&quot;Seats Available after completing Reservation&quot;);</span>
+<span class="fc" id="L135">        reservation.print();</span>
+<span class="fc" id="L136">        log.info(&quot;--------------------------------------&quot;);</span>
+<span class="fc" id="L137">        return seatHold.getConfirmationCode();</span>
+    }
+
+    /**
+     * changing the status of booked seats in reservation map
+     * @param entry
+     * @param fromStatus
+     * @param toStatus
+     */
+    private void updateHeldSeatStatus(Map.Entry&lt;Integer, String&gt; entry, BookingStatus fromStatus, BookingStatus toStatus) {
+<span class="fc" id="L147">        reservation.getReservationMap().get(new HallRow(entry.getKey()))</span>
+<span class="fc" id="L148">                .subList(Integer.parseInt(entry.getValue().split(Constants.delimiter)[0]) - 1,</span>
+<span class="fc" id="L149">                        Integer.parseInt(entry.getValue().split(Constants.delimiter)[1]))</span>
+<span class="fc" id="L150">                .forEach((seat) -&gt; {</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">                    if(seat.getStatus() == fromStatus) {</span>
+<span class="fc" id="L152">                        seat.setStatus(toStatus);</span>
+                    }
+<span class="fc" id="L154">                });</span>
+<span class="fc" id="L155">    }</span>
+
+    private static int getNumSeatsHeldOrReserved(String value) {
+<span class="fc" id="L158">        String[] values = value.split(Constants.delimiter);</span>
+<span class="fc" id="L159">        return Integer.parseInt(values[1]) - Integer.parseInt(values[0]) + 1;</span>
+    }
+
+<span class="fc" id="L162">    public TicketServiceImpl(Reservation reservation) {</span>
+<span class="fc" id="L163">        this.reservation = reservation;</span>
+<span class="fc" id="L164">    }</span>
+    public int numSeatsAvailable() {
+<span class="fc" id="L166">        return reservation.getTotalOpenSeats();</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

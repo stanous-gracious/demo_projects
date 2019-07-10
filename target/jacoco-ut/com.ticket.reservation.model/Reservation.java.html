@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Reservation.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ticket-reservation</a> &gt; <a href="index.source.html" class="el_package">com.ticket.reservation.model</a> &gt; <span class="el_source">Reservation.java</span></div><h1>Reservation.java</h1><pre class="source lang-java linenums">package com.ticket.reservation.model;
+
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+
+/**
+ * Created by Stan Gracious on 7/6/2019.
+ * This class holds all reservation for seats booked, it is multi-dimensional array of rows and seats objects
+ *
+ */
+public class Reservation {
+
+    private int totalOpenSeats;
+
+<span class="fc" id="L19">    private HashMap&lt;HallRow, List&lt;HallSeat&gt;&gt; reservationMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L20">    private final static Logger logger = Logger.getLogger(Reservation.class);</span>
+
+    /**
+     * Create multi-dimensional array ready for the reservation
+     * reservation map is updated based on seats booked, cancelled seats and temporary seats on hold
+     * reservation map also gives the view of the reservation done based on the seat status
+     * @return
+     */
+    public HashMap&lt;HallRow, List&lt;HallSeat&gt;&gt; getReservationMap() {
+<span class="fc" id="L29">        return reservationMap;</span>
+    }
+
+<span class="fc" id="L32">    public Reservation(int rows, int seats) {</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        for(int i = 1; i &lt;= rows; i++) {</span>
+<span class="fc" id="L34">            List&lt;HallSeat&gt; hallSeats = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">            for(int j = 1; j &lt;= seats; j++) {</span>
+<span class="fc" id="L36">                hallSeats.add(new HallSeat(j, BookingStatus.OPEN_FOR_RESERVATION));</span>
+            }
+<span class="fc" id="L38">            HallRow hallRow = new HallRow(i, seats);</span>
+<span class="fc" id="L39">            reservationMap.put(hallRow,hallSeats);</span>
+        }
+<span class="fc" id="L41">        this.totalOpenSeats = rows * seats;</span>
+<span class="fc" id="L42">    }</span>
+
+    public int getTotalOpenSeats() {
+<span class="fc" id="L45">        return totalOpenSeats;</span>
+    }
+
+<span class="fc" id="L48">    public void releaseTotalSeats(int numSeats) { this.totalOpenSeats = this.getTotalOpenSeats() + numSeats; }</span>
+
+<span class="fc" id="L50">    public void putOnHoldTotalSeats(int numSeats) { this.totalOpenSeats = this.getTotalOpenSeats() - numSeats; }</span>
+
+    public void print() {
+<span class="fc" id="L53">        this.reservationMap.entrySet().forEach(row -&gt;{</span>
+<span class="fc" id="L54">            logger.debug(row.getKey() + &quot; &quot; + row.getValue());</span>
+<span class="fc" id="L55">        });</span>
+<span class="fc" id="L56">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TicketBookingProcessor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ticket-reservation</a> &gt; <a href="index.source.html" class="el_package">com.ticket.reservation</a> &gt; <span class="el_source">TicketBookingProcessor.java</span></div><h1>TicketBookingProcessor.java</h1><pre class="source lang-java linenums">package com.ticket.reservation;
+
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import com.ticket.reservation.model.Reservation;
+import com.ticket.reservation.model.SeatHold;
+import com.ticket.reservation.service.TicketService;
+import com.ticket.reservation.service.TicketServiceImpl;
+import org.apache.log4j.Logger;
+import java.util.*;
+
+/**
+ * Created by Stan Gracious on 7/7/2019.
+ * Main Class to demonstrate the core functionality for booking seats via Command Line and Scanner object
+ * For Demo 50 rows are allocated to reservation map
+ */
+
+<span class="nc" id="L18">public class TicketBookingProcessor {</span>
+<span class="nc" id="L19">    private final static Logger log = Logger.getLogger(TicketBookingProcessor.class);</span>
+
+    private static Reservation reservation;
+    private static TicketService ticketService;
+<span class="nc" id="L23">    private static Table&lt;String, String, SeatHold&gt; seatHoldTable = HashBasedTable.create();</span>
+    private static Timer timer;
+
+    /**
+     * Main method to be called from command line
+     * @param args
+     */
+        public static void main (String[] args)
+        {
+<span class="nc" id="L32">            reservation = new Reservation(Integer.parseInt(args[0]), Integer.parseInt(args[1]));</span>
+<span class="nc" id="L33">            ticketService = new TicketServiceImpl(reservation);</span>
+<span class="nc" id="L34">            Scanner scanner = new Scanner(System.in);</span>
+            try {
+<span class="nc" id="L36">                log.info(&quot;Welcome to Ticket Booking Application&quot;);</span>
+<span class="nc" id="L37">                userChoice(scanner);</span>
+<span class="nc" id="L38">            }catch(Exception e){</span>
+<span class="nc" id="L39">                log.error(&quot;Exception Processing Booking Tickets \n&quot;+ e.getMessage());</span>
+<span class="nc" id="L40">                log.error(&quot;Please try again \n&quot;+ e.getMessage());</span>
+<span class="nc" id="L41">                userChoice(scanner);</span>
+<span class="nc" id="L42">            }</span>
+<span class="nc" id="L43">        }</span>
+
+    /**
+     * User is given the options to select while booking seats
+     * @param scanner
+     */
+    private static void userChoice(Scanner scanner) {
+<span class="nc" id="L50">            String userDisplay = &quot;\n---------- Enter your choice: ---------\n&quot;;</span>
+<span class="nc" id="L51">            userDisplay += &quot;1. Book Seats\n&quot;;</span>
+<span class="nc" id="L52">            userDisplay += &quot;2. Show total Available Seats\n&quot;;</span>
+<span class="nc" id="L53">            userDisplay += &quot;3. View Reservation\n&quot;;</span>
+<span class="nc" id="L54">            userDisplay += &quot;4. Cancel Reservation\n&quot;;</span>
+<span class="nc" id="L55">            userDisplay += &quot;5. Exit\n&quot;;</span>
+<span class="nc" id="L56">            userDisplay += &quot;--------------------------------------&quot;;</span>
+<span class="nc" id="L57">            log.info(userDisplay);</span>
+            try {
+<span class="nc" id="L59">                int choice = Integer.parseInt(scanner.next());</span>
+<span class="nc bnc" id="L60" title="All 6 branches missed.">                switch(choice){</span>
+<span class="nc" id="L61">                    case 1: bookSeats(scanner);</span>
+<span class="nc" id="L62">                    case 2: showAvailableSeats(scanner);</span>
+<span class="nc" id="L63">                    case 3: viewReservation(scanner);</span>
+<span class="nc" id="L64">                    case 4: cancelReservation(scanner);</span>
+<span class="nc" id="L65">                    case 5: systemExit();</span>
+                    default:
+<span class="nc" id="L67">                        log.error(&quot;Invalid Choice&quot;);</span>
+                        break;
+                }
+<span class="nc" id="L70">            } catch (Exception e) {</span>
+<span class="nc" id="L71">                log.error(&quot;Invalid choice. Please enter the correct Integer&quot;);</span>
+<span class="nc" id="L72">                userChoice(scanner);</span>
+<span class="nc" id="L73">            }</span>
+<span class="nc" id="L74">        }</span>
+
+    /**
+     * Book Seats with emaild-ID as key
+     * @param scanner
+     */
+    private static void bookSeats(Scanner scanner) {
+<span class="nc bnc" id="L81" title="All 2 branches missed.">            if (reservation.getTotalOpenSeats() == 0) {</span>
+<span class="nc" id="L82">                log.info(&quot;Sorry, All tickets Sold! Please try again later!&quot;);</span>
+<span class="nc" id="L83">                return;</span>
+            }
+<span class="nc" id="L85">            log.info(&quot;Enter your email id for Ticket Booking:\n &quot;);</span>
+<span class="nc" id="L86">            String emailId = scanner.next();</span>
+<span class="nc" id="L87">            log.info(&quot;Enter the number of seats you want to book \n&quot;);</span>
+<span class="nc" id="L88">            int numberOfSeats = scanner.nextInt();</span>
+
+<span class="nc bnc" id="L90" title="All 2 branches missed.">            if (numberOfSeats &gt; reservation.getTotalOpenSeats()) {</span>
+<span class="nc" id="L91">                log.info(&quot;Total Seats available are :&quot; + reservation.getTotalOpenSeats()+ &quot;\n&quot;);</span>
+<span class="nc" id="L92">                log.info(&quot;Cannot book Total Seats requested by you&quot;);</span>
+<span class="nc" id="L93">                return;</span>
+            }
+<span class="nc" id="L95">            log.info(String.format(&quot;%s, your total seats are %d&quot;, emailId, numberOfSeats));</span>
+<span class="nc" id="L96">            SeatHold seatHold = null;</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            if (numberOfSeats &lt;= reservation.getTotalOpenSeats()) {</span>
+<span class="nc" id="L98">                 seatHold = ticketService.findAndHoldSeats(numberOfSeats, emailId);</span>
+            }
+<span class="nc" id="L100">            log.info(&quot;Your have temporary hold on below seats&quot; + seatHold);</span>
+<span class="nc" id="L101">            log.info(&quot;Temporary hold will expire soon in 20 seconds \n&quot;);</span>
+<span class="nc" id="L102">            startOnHoldSession(seatHold);</span>
+<span class="nc" id="L103">            log.info(&quot;Confirm 'Y' or 'N' to continue&quot;);</span>
+<span class="nc" id="L104">            String bookingConfirmation = scanner.next();</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">            if (&quot;Y&quot;.equalsIgnoreCase(bookingConfirmation)) {</span>
+<span class="nc" id="L106">             timer.cancel();</span>
+<span class="nc" id="L107">             String confimationCode = ticketService.reserveSeats(seatHold, emailId);</span>
+<span class="nc" id="L108">             log.info(&quot;Cheers !!!, you tickets are booked with confirmationCode ===&gt;&quot; + confimationCode);</span>
+<span class="nc" id="L109">             updateUserInfo(emailId, seatHold);</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">            } else if (&quot;N&quot;.equalsIgnoreCase(bookingConfirmation)) {</span>
+<span class="nc" id="L111">                timer.cancel();</span>
+<span class="nc" id="L112">                ticketService.resetHeldSeats(seatHold);</span>
+<span class="nc" id="L113">                log.info(&quot;Sorry !!!, your tickets are not booked&quot;);</span>
+            } else {
+<span class="nc" id="L115">                log.info(&quot;No Valid input received&quot;);</span>
+            }
+<span class="nc" id="L117">            userChoice(scanner);</span>
+<span class="nc" id="L118">        }</span>
+
+    /**
+     * View the reservation done by the user, enter email id to view the reservation
+     * User can view the reservation for multiple bookings
+     * @param scanner
+     */
+    private static void viewReservation(Scanner scanner) {
+<span class="nc" id="L126">        log.info(&quot;Do you want to view your reservation? if so please enter the email id \n&quot;);</span>
+<span class="nc" id="L127">        String emailId = scanner.next();</span>
+<span class="nc" id="L128">        Map&lt;String, SeatHold&gt; seatHoldMap = getReservationDetails(emailId);</span>
+<span class="nc bnc" id="L129" title="All 4 branches missed.">        if(seatHoldMap != null &amp;&amp; !seatHoldMap.isEmpty()) {</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">            for(Map.Entry&lt;String, SeatHold&gt; entry : seatHoldMap.entrySet()) {</span>
+<span class="nc" id="L131">                log.info(&quot;Confirmation Code: &quot; + entry.getKey() + &quot;, Ticket Booking Details: &quot; + entry.getValue());</span>
+<span class="nc" id="L132">            }</span>
+        }else{
+<span class="nc" id="L134">            log.info(&quot;Your Don't have any Reservation Details&quot;);</span>
+        }
+<span class="nc" id="L136">        userChoice(scanner);</span>
+
+<span class="nc" id="L138">    }</span>
+
+    /**
+     * Show the available seats to the user
+     * @param scanner
+     */
+    private static void showAvailableSeats(Scanner scanner) {
+<span class="nc" id="L145">        log.info(&quot;Total Available Open Seats to Book are ===&gt; &quot; + reservation.getTotalOpenSeats());</span>
+<span class="nc" id="L146">        userChoice(scanner);</span>
+<span class="nc" id="L147">    }</span>
+
+    /**
+     * User can view cancel the reservation with help on email id
+     * @param scanner
+     */
+   private static void cancelReservation(Scanner scanner) {
+<span class="nc" id="L154">        log.info(&quot;Do you want to cancel your Reservation&quot;);</span>
+<span class="nc" id="L155">        log.info(&quot;Enter your email id for Ticket Booking: &quot;);</span>
+<span class="nc" id="L156">            String emailId = scanner.next();</span>
+<span class="nc" id="L157">            Map&lt;String, SeatHold&gt; seatHoldMap = getReservationDetails(emailId);</span>
+<span class="nc bnc" id="L158" title="All 4 branches missed.">            if(seatHoldMap == null || seatHoldMap.size() == 0){</span>
+<span class="nc" id="L159">                log.info(&quot;No Reservation Available to Cancel&quot;);</span>
+            }else {
+<span class="nc bnc" id="L161" title="All 2 branches missed.">                for (Map.Entry&lt;String, SeatHold&gt; entry : seatHoldMap.entrySet()) {</span>
+<span class="nc" id="L162">                    cancelReservation(emailId, entry.getValue());</span>
+<span class="nc" id="L163">                }</span>
+<span class="nc" id="L164">                log.info(&quot;Your Booking is Cancelled&quot;);</span>
+            }
+<span class="nc" id="L166">       userChoice(scanner);</span>
+<span class="nc" id="L167">    }</span>
+
+    /**
+     * Exit the Console
+     */
+    private static void systemExit(){
+<span class="nc" id="L173">        System.exit(0);</span>
+<span class="nc" id="L174">    }</span>
+
+    /**
+     * Update all bookings done by the user in table used as storage
+     * @param emailId
+     * @param seatHold
+     */
+    private static void updateUserInfo(String emailId, SeatHold seatHold) {
+<span class="nc" id="L182">        seatHoldTable.put(emailId, seatHold.getConfirmationCode(), seatHold);</span>
+<span class="nc" id="L183">    }</span>
+
+    private static Map&lt;String, SeatHold&gt; getReservationDetails(String emailId) {
+<span class="nc" id="L186">        return seatHoldTable.row(emailId);</span>
+    }
+
+    private static void cancelReservation(String emailId, SeatHold seatHold) {
+<span class="nc" id="L190">        seatHoldTable.remove(emailId, seatHold.getConfirmationCode());</span>
+<span class="nc" id="L191">        ticketService.resetHeldSeats(seatHold);</span>
+<span class="nc" id="L192">        }</span>
+
+    /**
+     * Holds the seats for a specified timeout
+     * @param seatHold seathold object
+     */
+    private static void startOnHoldSession(SeatHold seatHold) {
+<span class="nc" id="L199">        timer = new Timer();</span>
+
+<span class="nc" id="L201">        timer.schedule( new TimerTask(){</span>
+            public void run() {
+                // reset the held seats to available and remove the seats held
+<span class="nc" id="L204">                log.info(&quot;Releasing hold on seats...&quot;);</span>
+<span class="nc" id="L205">                ticketService.resetHeldSeats(seatHold);</span>
+<span class="nc" id="L206">                log.info(&quot;Session Expired!&quot;);</span>
+<span class="nc" id="L207">                log.info(&quot;total available:&quot; + ticketService.numSeatsAvailable());</span>
+<span class="nc" id="L208">            }</span>
+
+        }, 1000 * 20); //set to 20 seconds for Demo
+<span class="nc" id="L211">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

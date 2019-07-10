@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>HallSeat.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ticket-reservation</a> &gt; <a href="index.source.html" class="el_package">com.ticket.reservation.model</a> &gt; <span class="el_source">HallSeat.java</span></div><h1>HallSeat.java</h1><pre class="source lang-java linenums">package com.ticket.reservation.model;
+
+/**
+ * Created by Stan Gracious on 7/6/2019.
+ * This class holds all Seats in the Hall with event
+ */
+public class HallSeat{
+
+    private int id;
+    private BookingStatus status;
+<span class="fc" id="L11">    public HallSeat(int id, BookingStatus status) {</span>
+<span class="fc" id="L12">        this.id = id;</span>
+<span class="fc" id="L13">        this.status = status;</span>
+<span class="fc" id="L14">    }</span>
+
+    public BookingStatus getStatus() {
+<span class="fc" id="L17">        return status;</span>
+    }
+
+    public void setStatus(BookingStatus status) {
+<span class="fc" id="L21">        this.status = status;</span>
+<span class="fc" id="L22">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L26">        return &quot;HallSeat{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, status=&quot; + status +
+                '}';
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

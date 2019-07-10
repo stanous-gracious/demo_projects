@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>HallRow.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ticket-reservation</a> &gt; <a href="index.source.html" class="el_package">com.ticket.reservation.model</a> &gt; <span class="el_source">HallRow.java</span></div><h1>HallRow.java</h1><pre class="source lang-java linenums">package com.ticket.reservation.model;
+
+/**
+ * Created by Stan Gracious on 7/6/2019.
+ * This class holds all rows in the Hall with event
+ */
+public class HallRow implements Comparable&lt;HallRow&gt;{
+
+    private Integer rowId;
+    private Integer availableSeatsInRow;
+<span class="fc" id="L11">    public HallRow(Integer rowId) {</span>
+<span class="fc" id="L12">        this.rowId = rowId;</span>
+<span class="fc" id="L13">    }</span>
+<span class="fc" id="L14">    public HallRow(Integer rowId, Integer availableSeatsInRow) {</span>
+<span class="fc" id="L15">        this.rowId = rowId;</span>
+<span class="fc" id="L16">        this.availableSeatsInRow = availableSeatsInRow;</span>
+<span class="fc" id="L17">    }</span>
+
+    public Integer getAvailableSeatsInRow() {
+<span class="fc" id="L20">        return availableSeatsInRow;</span>
+    }
+
+    public void setAvailableSeatsInRow(Integer availableSeatsInRow) {
+<span class="fc" id="L24">        this.availableSeatsInRow = availableSeatsInRow;</span>
+<span class="fc" id="L25">    }</span>
+    @Override
+    public boolean equals(Object o) {
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        if (this == o) return true;</span>
+<span class="pc bpc" id="L29" title="2 of 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+
+<span class="fc" id="L31">        HallRow row = (HallRow) o;</span>
+
+<span class="fc" id="L33">        return rowId.equals(row.rowId);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L38">        return rowId.hashCode();</span>
+    }
+
+    public int compareTo(HallRow r) {
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if(this.availableSeatsInRow == r.availableSeatsInRow)</span>
+<span class="nc" id="L43">            return 0;</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        else return this.availableSeatsInRow &gt; r.availableSeatsInRow ? 1 : -1;</span>
+    }
+
+    public Integer getRowId() {
+<span class="fc" id="L48">        return rowId;</span>
+    }
+
+    public void setRowId(Integer rowId) {
+<span class="nc" id="L52">        this.rowId = rowId;</span>
+<span class="nc" id="L53">    }</span>
+
+
+    public void releaseSeatsInRow(int numSeats) {
+<span class="fc" id="L57">        this.setAvailableSeatsInRow(this.getAvailableSeatsInRow() + numSeats);</span>
+<span class="fc" id="L58">    }</span>
+
+    public void putOnHoldSeatsInRow(int numSeats) {
+<span class="fc" id="L61">        this.setAvailableSeatsInRow(this.getAvailableSeatsInRow() - numSeats);</span>
+<span class="fc" id="L62">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L66">        return &quot;HallRow{&quot; +</span>
+                &quot;rowId=&quot; + rowId +
+                &quot;, availableSeatsInRow=&quot; + availableSeatsInRow +
+                '}';
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
